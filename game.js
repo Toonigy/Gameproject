@@ -1,49 +1,77 @@
-// Create a canvas element
+// JavaScript code for the game with a yellow square and chat feature
+const menu = document.createElement('div');
+menu.style.position = 'absolute';
+menu.style.top = '50%';
+menu.style.left = '50%';
+menu.style.transform = 'translate(-50%, -50%)';
+menu.style.textAlign = 'center';
+document.body.appendChild(menu);
+
+const title = document.createElement('h1');
+title.textContent = 'My Game';
+menu.appendChild(title);
+
+const playButton = document.createElement('button');
+playButton.textContent = 'Play';
+playButton.addEventListener('click', () => {
+  document.body.removeChild(menu);
+  drawSquare();
+});
+menu.appendChild(playButton);
+
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
+canvas.width = 600;
+canvas.height = 600;
 document.body.appendChild(canvas);
 
-// Set canvas size
-canvas.width = 800;
-canvas.height = 600;
+let squareX = 250;
+let squareY = 250;
+let chatMessage = "";
 
-// Draw white background
-ctx.fillStyle = 'white';
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+function drawSquare() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = 'yellow';
+  ctx.fillRect(squareX, squareY, 50, 50);
 
-// Define person properties
-let personX = 50;
-let personY = 50;
-const personWidth = 20;
-const personHeight = 40;
-
-// Draw person
-function drawPerson() {
-    ctx.fillStyle = 'black';
-    ctx.fillRect(personX, personY, personWidth, personHeight);
+  ctx.fillStyle = 'black';
+  ctx.fillText(chatMessage, squareX, squareY - 10);
 }
 
-// Move person
-function movePerson(event) {
-    switch (event.key) {
-        case 'ArrowUp':
-            personY -= 10;
-            break;
-        case 'ArrowDown':
-            personY += 10;
-            break;
-        case 'ArrowLeft':
-            personX -= 10;
-            break;
-        case 'ArrowRight':
-            personX += 10;
-            break;
-    }
-    drawPerson();
+function handleKeyPress(e) {
+  const key = e.keyCode;
+
+  if (key === 37) {
+    squareX -= 10;
+  } else if (key === 39) {
+    squareX += 10;
+  } else if (key === 38) {
+    squareY -= 10;
+  } else if (key === 40) {
+    squareY += 10;
+  }
+
+  drawSquare();
 }
 
-// Event listener for keyboard input
-document.addEventListener('keydown', movePerson);
+function handleSubmit() {
+  const chatInput = document.getElementById('chatInput');
+  chatMessage = chatInput.value.replace(/[^a-zA-Z0-9\s]/g, "");
+  chatInput.value = "";
+  drawSquare();
+}
 
-// Initial draw
-drawPerson();
+document.addEventListener('keydown', handleKeyPress);
+
+const chatInput = document.createElement('input');
+chatInput.id = 'chatInput';
+chatInput.type = 'text';
+chatInput.placeholder = 'Enter chat message';
+document.body.appendChild(chatInput);
+
+const submitButton = document.createElement('button');
+submitButton.textContent = 'Submit Chat';
+submitButton.addEventListener('click', handleSubmit);
+document.body.appendChild(submitButton);
+
+drawSquare();
